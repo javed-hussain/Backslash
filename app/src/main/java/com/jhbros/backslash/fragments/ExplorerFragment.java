@@ -15,6 +15,7 @@ import com.jhbros.backslash.R;
 import com.jhbros.backslash.adapters.FilesListRecyclerViewAdapter;
 import com.jhbros.backslash.interfaces.ListItemClickListener;
 import com.jhbros.backslash.interfaces.OnFolderLocationChangeListner;
+import com.jhbros.backslash.utils.FileOpener;
 import com.jhbros.backslash.utils.FilesUtil;
 
 import java.io.File;
@@ -41,6 +42,8 @@ public class ExplorerFragment extends Fragment {
                     adapter.setFiles(FilesUtil.getSortedFiles(f));
                     if (changeListner != null)
                         changeListner.onFolderLocationChange(f);
+                } else {
+                    FileOpener.openFile(f, getContext());
                 }
                 adapter.notifyDataSetChanged();
             }
