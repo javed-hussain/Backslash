@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/storages"
+            android:icon="@drawable/storage"
+            android:title="@string/storage" />
+        <item
+            android:id="@+id/category"
+            android:icon="@drawable/categories"
+            android:title="@string/category" />
+        <item
+            android:id="@+id/cloud"
+            android:icon="@drawable/cloud"
+            android:title="@string/cloud" />
+    </group>
+</menu>

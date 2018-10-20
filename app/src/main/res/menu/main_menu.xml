@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/file_search"
+        android:icon="@drawable/search_icon"
+        android:iconTint="@color/white"
+        android:title="Search"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item
+        android:id="@+id/properties"
+        android:icon="@drawable/properties"
+        android:title="Properties"/>
+
+    <item
+        android:id="@+id/operations"
+        android:icon="@drawable/operations"
+        android:title="Operations"/>
+
+    <item
+        android:id="@+id/filters"
+        android:icon="@drawable/filters"
+        android:title="Filters"/>
+
+    <item
+        android:id="@+id/about_us"
+        android:icon="@drawable/info"
+        android:title="About Us"/>
+
+</menu>

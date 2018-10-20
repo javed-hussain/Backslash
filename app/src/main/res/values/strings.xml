@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Backslash</string>
+
+    <!-- Drawer Menu Strings -->
+
+    <string name="storage">Storage</string>
+    <string name="category">Category</string>
+    <string name="cloud">Cloud</string>
+</resources>
