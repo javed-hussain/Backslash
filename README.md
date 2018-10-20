@@ -5,3 +5,6 @@ This is an open source initiative to develop and design a beautiful UI with powe
 
 ## For Developers
 All android developers are most welcome to contribute to the project. I am also new to open source community. Any suggestions are also welcome to enhence and adding the functionalities. This is a project in it's initial state so, all beginers can also contribute. 
+
+## Contributions -
+Still waiting for someone to join the movement. :)
