@@ -1,5 +1,7 @@
 package com.jhbros.backslash.utils;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -8,7 +10,17 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FilesUtil {
-    public static final Boolean showHidden = false;
+    private static final Boolean showHidden = false;
+
+    private static File ROOT = Environment.getExternalStorageDirectory();
+
+    public static File getROOT() {
+        return ROOT;
+    }
+
+    public static void setROOT(File ROOT) {
+        FilesUtil.ROOT = ROOT;
+    }
 
     public static List<File> getSortedFiles(File f) {
         List<File> returnedFiles = new ArrayList<>();
@@ -47,6 +59,10 @@ public class FilesUtil {
         DecimalFormat format=new DecimalFormat();
         format.setMaximumFractionDigits(2);
         return String.valueOf(format.format(val)+" "+units[i]);
+    }
+
+    public static boolean isRoot(File f) {
+        return f.getAbsolutePath().equalsIgnoreCase(ROOT.getAbsolutePath());
     }
 
     public enum FileType {

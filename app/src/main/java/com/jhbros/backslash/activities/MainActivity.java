@@ -2,10 +2,12 @@ package com.jhbros.backslash.activities;
 
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -14,25 +16,27 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.jhbros.backslash.R;
-import com.jhbros.backslash.adapters.FilesListRecyclerViewAdapter;
 import com.jhbros.backslash.adapters.MultiWindowExplorerAdapter;
-import com.jhbros.backslash.interfaces.ListItemClickListener;
+import com.jhbros.backslash.interfaces.OnFolderLocationChangeListner;
 import com.jhbros.backslash.utils.FilesUtil;
+import com.jhbros.backslash.views.FilePathNavigationView;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
+    private FilePathNavigationView pathNavigationView;
+    private File currentFolder = FilesUtil.getROOT();
+    private ViewPager pager;
 
     private static final String TAG=MainActivity.class.getName();
 
@@ -40,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ViewPager pager=findViewById(R.id.pager);
-        pager.setAdapter(new MultiWindowExplorerAdapter(this,getSupportFragmentManager()));
+        pager = findViewById(R.id.pager);
+        pager.setAdapter(new MultiWindowExplorerAdapter(this, getSupportFragmentManager(), 3));
 
         TabLayout tabLayout=findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(pager, true);
@@ -59,13 +63,22 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                         menuItem.setChecked(true);
                         drawerLayout.closeDrawers();
                         return true;
                     }
                 });
         navigationView.setItemIconTintList(null);
+        pathNavigationView = findViewById(R.id.path_navigator);
+        pathNavigationView.setValues(FilesUtil.getROOT());
+        ((MultiWindowExplorerAdapter) pager.getAdapter()).setOnFolderLocationChangeListener(new OnFolderLocationChangeListner() {
+            @Override
+            public void onFolderLocationChange(File file) {
+                currentFolder = file;
+                pathNavigationView.setValues(file);
+            }
+        });
     }
 
     @SuppressLint("RestrictedApi")
@@ -98,5 +111,34 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, this.currentFolder.getAbsolutePath());
+        Log.d(TAG, FilesUtil.getROOT().getAbsolutePath());
+        if (FilesUtil.isRoot(this.currentFolder)) {
+            Log.d(TAG, "Inside ROOT");
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage("Are you sure you want to exit?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finishAffinity();
+                        }
+                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            builder.create().show();
+        } else {
+            Log.d(TAG, "Not Inside ROOT");
+            this.currentFolder = currentFolder.getParentFile();
+            this.pathNavigationView.setValues(this.currentFolder);
+            ((MultiWindowExplorerAdapter) pager.getAdapter()).navigateTo(this.pager.getCurrentItem(), this.currentFolder);
+        }
     }
 }

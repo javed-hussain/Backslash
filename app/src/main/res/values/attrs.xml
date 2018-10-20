@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FilePathNavigationView">
+        <attr name="separator" format="string" localization="suggested" />
+        <attr name="color" format="color" />
+    </declare-styleable>
+</resources>

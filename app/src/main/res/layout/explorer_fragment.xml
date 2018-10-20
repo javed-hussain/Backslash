@@ -6,13 +6,12 @@
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/files_list"
-        android:layout_marginTop="?attr/actionBarSize"/>
+        android:id="@+id/files_list" />
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         app:useCompatPadding="true"
         android:src="@drawable/cloud"
         android:tint="@color/white"/>
