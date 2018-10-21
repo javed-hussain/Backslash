@@ -15,30 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  **************************************************************************************************/
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.jhbros.backslash.interfaces;
 
-buildscript {
-    
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        
+import java.io.File;
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
+public interface Observable {
+    void subscribeObserver(Observer observer);
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
+    void notifyObservers(File file);
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    void unsubscribeObserver(Observer observer);
 }

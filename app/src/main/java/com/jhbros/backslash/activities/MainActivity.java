@@ -1,3 +1,20 @@
+/***************************************************************************************************
+ * Copyright (c) 2018.
+ *
+ * This file is a part of Backslash File Manager
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ **************************************************************************************************/
+
 package com.jhbros.backslash.activities;
 
 import android.animation.LayoutTransition;
@@ -26,6 +43,7 @@ import android.widget.LinearLayout;
 
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.adapters.MultiWindowExplorerAdapter;
+import com.jhbros.backslash.fragments.ExplorerFragment;
 import com.jhbros.backslash.interfaces.OnFolderLocationChangeListner;
 import com.jhbros.backslash.utils.FilesUtil;
 import com.jhbros.backslash.views.FilePathNavigationView;
@@ -38,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private File currentFolder = FilesUtil.getROOT();
     private ViewPager pager;
 
-    private static final String TAG=MainActivity.class.getName();
+    private static final String TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,9 +64,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         pager = findViewById(R.id.pager);
         pager.setAdapter(new MultiWindowExplorerAdapter(this, getSupportFragmentManager(), 3));
-
-        TabLayout tabLayout=findViewById(R.id.tab_layout);
+        pager.setOffscreenPageLimit(2);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(pager, true);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                currentFolder = ((ExplorerFragment) ((MultiWindowExplorerAdapter) pager.getAdapter()).getItem(i)).getCurrentFolder();
+                pathNavigationView.setValues(currentFolder);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         toolbar.setTitle(R.string.app_name);
