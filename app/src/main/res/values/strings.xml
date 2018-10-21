@@ -1,19 +1,19 @@
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Copyright (c) 2018.
-
-  This file is a part of Backslash File Manager
-
-  This program is free software: you can redistribute it and/or modify it under the terms of
-  the GNU General Public License as published by the Free Software Foundation,
-  either version 3 of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-  PURPOSE.  See the GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License along with this program.
-  If not, see <https://www.gnu.org/licenses/>.
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright (c) 2018.
+  ~
+  ~ This file is a part of Backslash File Manager
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it under the terms of
+  ~ the GNU General Public License as published by the Free Software Foundation,
+  ~ either version 3 of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  ~ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  ~ PURPOSE.  See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with this program.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <resources>
     <string name="app_name">Backslash</string>
@@ -23,4 +23,61 @@
     <string name="storage">Storage</string>
     <string name="category">Category</string>
     <string name="cloud">Cloud</string>
+
+    <!--Java File Constants-->
+    <string name="directory">Directory</string>
+    <string name="lastModifiedDateFormat">MMM dd, yyyy hh:mm:ss a</string>
+    <string name="FileOpenerException">No appropriate application available to open the file</string>
+
+    <!--File Extension Arrays-->
+    <string-array name="audioFormats">
+        <item>mp3</item>
+        <item>wav</item>
+        <item>aac</item>
+        <item>aiff</item>
+        <item>m4a</item>
+        <item>oga</item>
+        <item>wma</item>
+        <item>raw</item>
+    </string-array>
+    <string-array name="videoFormats">
+        <item>webm</item>
+        <item>mkv</item>
+        <item>flv</item>
+        <item>avi</item>
+        <item>mov</item>
+        <item>wmv</item>
+        <item>mp4</item>
+        <item>mpg</item>
+        <item>mpeg</item>
+        <item>m4v</item>
+        <item>3gp</item>
+    </string-array>
+    <string-array name="compressedFormats">
+        <item>zip</item>
+        <item>tar</item>
+        <item>gz</item>
+        <item>7z</item>
+        <item>dmg</item>
+        <item>rar</item>
+        <item>jar</item>
+    </string-array>
+    <string-array name="documentFormats">
+        <item>doc</item>
+        <item>ppt</item>
+        <item>docx</item>
+        <item>txt</item>
+    </string-array>
+    <string-array name="imageFormats">
+        <item>jpg</item>
+        <item>jpeg</item>
+        <item>png</item>
+        <item>gif</item>
+    </string-array>
+    <string-array name="encryptedFormats">
+        <item>bsenc</item>
+    </string-array>
+    <string-array name="apkFormats">
+        <item>apk</item>
+    </string-array>
 </resources>

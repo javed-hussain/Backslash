@@ -17,11 +17,21 @@
 
 package com.jhbros.backslash.utils;
 
+/*
+ * Created by javed
+ */
+
+
+import android.content.Context;
 import android.os.Environment;
+
+import com.jhbros.backslash.R;
+import com.jhbros.backslash.exceptions.FileFormatsException;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -43,11 +53,11 @@ public class FilesUtil {
         List<File> returnedFiles = new ArrayList<>();
         final List<File> files = new ArrayList<>();
         List<File> directories = new ArrayList<>();
-        for(File file:f.listFiles()){
-            if(!(!showHidden && file.getName().startsWith("."))){
-                if(file.isDirectory()){
+        for (File file : f.listFiles()) {
+            if (!(!showHidden && file.getName().startsWith("."))) {
+                if (file.isDirectory()) {
                     directories.add(file);
-                }else {
+                } else {
                     files.add(file);
                 }
             }
@@ -65,17 +75,17 @@ public class FilesUtil {
 
     }
 
-    public static String convertSize(long bytes){
-        String[] units=new String[]{"bytes","KB","MB","GB","TB"};
-        double val=bytes;
-        int i=0;
-        while(val>1024){
-            val/=1024;
+    public static String convertSize(long bytes) {
+        String[] units = new String[]{"bytes", "KB", "MB", "GB", "TB"};
+        double val = bytes;
+        int i = 0;
+        while (val > 1024) {
+            val /= 1024;
             i++;
         }
-        DecimalFormat format=new DecimalFormat();
+        DecimalFormat format = new DecimalFormat();
         format.setMaximumFractionDigits(2);
-        return String.valueOf(format.format(val)+" "+units[i]);
+        return String.valueOf(format.format(val) + " " + units[i]);
     }
 
     public static boolean isRoot(File f) {
@@ -92,65 +102,25 @@ public class FilesUtil {
         private static final List<String> ENCRYPTED_EXT = new ArrayList<>();
         private static final List<String> IMAGE_EXT = new ArrayList<>();
         private static final List<String> APK_EXT = new ArrayList<>();
+        private static boolean isValuesSet = false;
 
-        static {
-            // Audio formats to be recognised
-            AUDIO_EXT.add("mp3");
-            AUDIO_EXT.add("wav");
-            AUDIO_EXT.add("aac");
-            AUDIO_EXT.add("aiff");
-            AUDIO_EXT.add("m4a");
-            AUDIO_EXT.add("oga");
-            AUDIO_EXT.add("wma");
-            AUDIO_EXT.add("raw");
-
-            // Video formats to be recognised
-            VIDEO_EXT.add("webm");
-            VIDEO_EXT.add("mkv");
-            VIDEO_EXT.add("flv");
-            VIDEO_EXT.add("avi");
-            VIDEO_EXT.add("mov");
-            VIDEO_EXT.add("wmv");
-            VIDEO_EXT.add("mp4");
-            VIDEO_EXT.add("mpg");
-            VIDEO_EXT.add("mpeg");
-            VIDEO_EXT.add("m4v");
-            VIDEO_EXT.add("3gp");
-
-            // Compressed formats to be recognised
-            COMPRESSED_EXT.add("zip");
-            COMPRESSED_EXT.add("tar");
-            COMPRESSED_EXT.add("gz");
-            COMPRESSED_EXT.add("7z");
-            COMPRESSED_EXT.add("dmg");
-            COMPRESSED_EXT.add("rar");
-            COMPRESSED_EXT.add("jar");
-
-            //Document formats to be recognised
-            DOCUMENT_EXT.add("doc");
-            DOCUMENT_EXT.add("ppt");
-            DOCUMENT_EXT.add("docx");
-            DOCUMENT_EXT.add("txt");
-
-            //Encrypted formats to be recognised
-            ENCRYPTED_EXT.add("bsenc");
-
-            //Image formats to be recognised
-            IMAGE_EXT.add("jpg");
-            IMAGE_EXT.add("jpeg");
-            IMAGE_EXT.add("png");
-            IMAGE_EXT.add("gif");
-
-            //Apk format to be recognised
-            APK_EXT.add("apk");
-
+        public static void setValuesFromResources(Context ctx) {
+            AUDIO_EXT.addAll(Arrays.asList(ctx.getResources().getStringArray(R.array.audioFormats)));
+            VIDEO_EXT.addAll(Arrays.asList(ctx.getResources().getStringArray(R.array.videoFormats)));
+            DOCUMENT_EXT.addAll(Arrays.asList(ctx.getResources().getStringArray(R.array.documentFormats)));
+            IMAGE_EXT.addAll(Arrays.asList(ctx.getResources().getStringArray(R.array.imageFormats)));
+            APK_EXT.addAll(Arrays.asList(ctx.getResources().getStringArray(R.array.apkFormats)));
+            ENCRYPTED_EXT.addAll(Arrays.asList(ctx.getResources().getStringArray(R.array.encryptedFormats)));
+            COMPRESSED_EXT.addAll(Arrays.asList(ctx.getResources().getStringArray(R.array.compressedFormats)));
+            isValuesSet = true;
         }
 
-        public static FileType getFileType(File file) {
-            if(file.isDirectory()) return FOLDER;
-            String extension="";
-            if(file.getName().contains(".")) {
-                extension= file.getName().substring(file.getName().lastIndexOf('.')+1).toLowerCase();
+        public static FileType getFileType(File file) throws FileFormatsException {
+            if (!isValuesSet) throw new FileFormatsException("File formats are not set currently");
+            if (file.isDirectory()) return FOLDER;
+            String extension = "";
+            if (file.getName().contains(".")) {
+                extension = file.getName().substring(file.getName().lastIndexOf('.') + 1).toLowerCase();
             }
             if (AUDIO_EXT.contains(extension)) return AUDIO;
             if (VIDEO_EXT.contains(extension)) return VIDEO;

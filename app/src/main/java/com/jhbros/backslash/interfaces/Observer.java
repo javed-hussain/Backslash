@@ -17,8 +17,12 @@
 
 package com.jhbros.backslash.interfaces;
 
+/*
+ * Created by javed
+ */
+
 import java.io.File;
 
 public interface Observer {
-    void onUpdate(File changedFolder);
+    void onUpdate(Observable observable, File changedFolder);
 }

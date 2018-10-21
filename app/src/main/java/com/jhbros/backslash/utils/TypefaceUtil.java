@@ -17,6 +17,11 @@
 
 package com.jhbros.backslash.utils;
 
+/*
+ * Created by javed
+ */
+
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -48,10 +53,8 @@ public class TypefaceUtil {
                         .getDeclaredField("sSystemFontMap");
                 staticField.setAccessible(true);
                 staticField.set(null, newMap);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                Log.e(TypefaceUtil.class.getName(), e.getMessage());
             }
         } else {
             try {

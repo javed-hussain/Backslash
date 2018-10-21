@@ -15,16 +15,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  **************************************************************************************************/
 
+package com.jhbros.backslash;
 
-package com.jhbros.backslash.interfaces;
+import android.app.Application;
+
+import com.jhbros.backslash.utils.FilesUtil;
+
 
 /*
- * Created by javed
+ * Created by javed on 10/21/2018
  */
 
-import java.io.File;
-
-
-public interface ListItemClickListener {
-    void onClick(File f);
+public class BackslashApp extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        FilesUtil.FileType.setValuesFromResources(getApplicationContext());
+    }
 }

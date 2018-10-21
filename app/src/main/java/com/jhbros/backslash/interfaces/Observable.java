@@ -17,12 +17,10 @@
 
 package com.jhbros.backslash.interfaces;
 
-import java.io.File;
-
 public interface Observable {
     void subscribeObserver(Observer observer);
 
-    void notifyObservers(File file);
+    void notifyObservers();
 
     void unsubscribeObserver(Observer observer);
 }

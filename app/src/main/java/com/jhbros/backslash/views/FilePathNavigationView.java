@@ -17,6 +17,11 @@
 
 package com.jhbros.backslash.views;
 
+/*
+ * Created by javed
+ */
+
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -29,6 +34,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jhbros.backslash.R;
+import com.jhbros.backslash.interfaces.FileNavigatorChangedListener;
+import com.jhbros.backslash.interfaces.Observable;
+import com.jhbros.backslash.interfaces.Observer;
 import com.jhbros.backslash.utils.FilesUtil;
 
 import java.io.File;
@@ -36,8 +44,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FilePathNavigationView extends LinearLayout {
+public class FilePathNavigationView extends LinearLayout implements Observer {
     private Context context;
+    private FileNavigatorChangedListener navigatorChangedListener;
 
     public FilePathNavigationView(Context context) {
         super(context);
@@ -75,7 +84,7 @@ public class FilePathNavigationView extends LinearLayout {
         a.recycle();
     }
 
-    private boolean setView(List<File> values) {
+    private void setView(List<File> files) {
         removeAllViews();
         HorizontalScrollView scrollView = new HorizontalScrollView(context);
         scrollView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
@@ -84,36 +93,38 @@ public class FilePathNavigationView extends LinearLayout {
         scrollView.setVerticalScrollBarEnabled(false);
         addView(scrollView);
         LinearLayout layout = new LinearLayout(context);
-        layout.setPadding(60, 20, 50, 20);
+        layout.setPadding(60, 20, 60, 20);
         layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         layout.setOrientation(HORIZONTAL);
         layout.setGravity(Gravity.CENTER);
         scrollView.addView(layout);
         int count = 0;
-        for (final File value : values) {
+        for (final File file : files) {
             TextView textView = new TextView(context);
             textView.setTextSize(14);
             textView.setGravity(Gravity.CENTER);
-            textView.setText(FilesUtil.isRoot(value) ? "INTERNAL STORAGE" : value.getName().toUpperCase());
+            textView.setText(FilesUtil.isRoot(file) ? "INTERNAL STORAGE" : file.getName().toUpperCase());
             textView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //((FileListFragment) fragment).navigateTo(value);
+                    if (navigatorChangedListener != null) {
+                        setValues(file);
+                        navigatorChangedListener.onNavigationChanged(file);
+                    }
                 }
             });
             ImageView imageView = new ImageView(context);
             imageView.setImageResource(R.drawable.path_separator);
             imageView.setPadding(20, 0, 10, 0);
             layout.addView(textView);
-            if (++count != values.size()) {
+            if (++count != files.size()) {
                 layout.addView(imageView);
                 textView.setTextColor(getResources().getColor(R.color.off_white));
             } else {
                 textView.setTextColor(getResources().getColor(R.color.white));
             }
         }
-        scrollView.fullScroll(HorizontalScrollView.FOCUS_LEFT);
-        return true;
+        scrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
     }
 
     public void setValues(File folder) {
@@ -125,5 +136,14 @@ public class FilePathNavigationView extends LinearLayout {
         navigator.add(FilesUtil.getROOT());
         Collections.reverse(navigator);
         setView(navigator);
+    }
+
+    @Override
+    public void onUpdate(Observable observable, File changedFolder) {
+        this.setValues(changedFolder);
+    }
+
+    public void setNavigatorChangedListener(FileNavigatorChangedListener navigatorChangedListener) {
+        this.navigatorChangedListener = navigatorChangedListener;
     }
 }

@@ -17,6 +17,11 @@
 
 package com.jhbros.backslash.activities;
 
+/*
+ * Created by javed
+ */
+
+
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -44,17 +49,19 @@ import android.widget.LinearLayout;
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.adapters.MultiWindowExplorerAdapter;
 import com.jhbros.backslash.fragments.ExplorerFragment;
-import com.jhbros.backslash.interfaces.OnFolderLocationChangeListner;
+import com.jhbros.backslash.interfaces.FileNavigatorChangedListener;
+import com.jhbros.backslash.interfaces.Observable;
+import com.jhbros.backslash.interfaces.Observer;
 import com.jhbros.backslash.utils.FilesUtil;
 import com.jhbros.backslash.views.FilePathNavigationView;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Observer {
     private DrawerLayout drawerLayout;
     private FilePathNavigationView pathNavigationView;
-    private File currentFolder = FilesUtil.getROOT();
     private ViewPager pager;
+    private File currentFolder = FilesUtil.getROOT();
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -62,36 +69,63 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initializeView();
+    }
+
+    private void initializeView() {
+        setupToolbarAndDrawer();
+        setupPagerAndBreadCrumb();
+
+    }
+
+    private void setupPagerAndBreadCrumb() {
+        pathNavigationView = findViewById(R.id.path_navigator);
+        pathNavigationView.setValues(FilesUtil.getROOT());
+
         pager = findViewById(R.id.pager);
-        pager.setAdapter(new MultiWindowExplorerAdapter(this, getSupportFragmentManager(), 3));
-        pager.setOffscreenPageLimit(2);
+        final MultiWindowExplorerAdapter adapter = new MultiWindowExplorerAdapter(this, getSupportFragmentManager(), 3, pathNavigationView);
+        pager.setAdapter(adapter);
+        pager.setOffscreenPageLimit(0);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(pager, true);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
+                // Not Needed to Override
             }
 
             @Override
             public void onPageSelected(int i) {
-                currentFolder = ((ExplorerFragment) ((MultiWindowExplorerAdapter) pager.getAdapter()).getItem(i)).getCurrentFolder();
-                pathNavigationView.setValues(currentFolder);
+                ((ExplorerFragment) adapter.getItem(i)).notifyObservers();
             }
 
             @Override
             public void onPageScrollStateChanged(int i) {
-
+                // Not Needed to Override
             }
         });
 
+        pathNavigationView.setNavigatorChangedListener(new FileNavigatorChangedListener() {
+            @Override
+            public void onNavigationChanged(File f) {
+                currentFolder = f;
+                ((ExplorerFragment) adapter.getItem(pager.getCurrentItem())).navigateTo(f);
+            }
+        });
+    }
+
+    private void setupToolbarAndDrawer() {
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         toolbar.setTitle(R.string.app_name);
         toolbar.setSubtitle("5 Folders, 15 Files");
         toolbar.setSubtitleTextAppearance(this, R.style.subtitle);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
+        }
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -104,15 +138,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         navigationView.setItemIconTintList(null);
-        pathNavigationView = findViewById(R.id.path_navigator);
-        pathNavigationView.setValues(FilesUtil.getROOT());
-        ((MultiWindowExplorerAdapter) pager.getAdapter()).setOnFolderLocationChangeListener(new OnFolderLocationChangeListner() {
-            @Override
-            public void onFolderLocationChange(File file) {
-                currentFolder = file;
-                pathNavigationView.setValues(file);
-            }
-        });
     }
 
     @SuppressLint("RestrictedApi")
@@ -149,8 +174,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, this.currentFolder.getAbsolutePath());
-        Log.d(TAG, FilesUtil.getROOT().getAbsolutePath());
         if (FilesUtil.isRoot(this.currentFolder)) {
             Log.d(TAG, "Inside ROOT");
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
@@ -174,5 +197,10 @@ public class MainActivity extends AppCompatActivity {
             this.pathNavigationView.setValues(this.currentFolder);
             ((MultiWindowExplorerAdapter) pager.getAdapter()).navigateTo(this.pager.getCurrentItem(), this.currentFolder);
         }
+    }
+
+    @Override
+    public void onUpdate(Observable observable, File changedFolder) {
+        this.currentFolder = changedFolder;
     }
 }

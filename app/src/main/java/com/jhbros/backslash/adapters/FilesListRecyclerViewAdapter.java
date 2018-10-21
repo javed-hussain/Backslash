@@ -17,11 +17,16 @@
 
 package com.jhbros.backslash.adapters;
 
+/*
+ * Created by javed
+ */
+
+
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jhbros.backslash.R;
+import com.jhbros.backslash.exceptions.FileFormatsException;
 import com.jhbros.backslash.interfaces.ListItemClickListener;
 import com.jhbros.backslash.utils.FilesUtil;
 
@@ -36,6 +42,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesListRecyclerViewAdapter.ViewHolder> {
     private Context context;
@@ -57,14 +64,18 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         final File f = files.get(i);
-        setIcon(f, viewHolder);
+        try {
+            setIcon(f, viewHolder);
+        } catch (FileFormatsException e) {
+            Log.d(this.getClass().getName(), e.getMessage());
+        }
         viewHolder.name.setText(f.getName());
         if (f.isDirectory()) {
-            viewHolder.size.setText("Directory");
+            viewHolder.size.setText(context.getString(R.string.directory));
         } else {
             viewHolder.size.setText(FilesUtil.convertSize(f.length()));
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(context.getString(R.string.lastModifiedDateFormat), Locale.ENGLISH);
         viewHolder.lastModified.setText(dateFormat.format(new Date(f.lastModified())));
         viewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,14 +85,14 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
         });
     }
 
-    private void setIcon(File f, ViewHolder viewHolder) {
+    private void setIcon(File f, ViewHolder viewHolder) throws FileFormatsException {
+
         switch (FilesUtil.FileType.getFileType(f)) {
             case APK:
                 viewHolder.icon.setImageResource(R.drawable.android);
                 break;
             case AUDIO:
                 viewHolder.icon.setImageResource(R.drawable.music);
-                viewHolder.icon.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.colorPrimary)));
                 break;
             case COMPRESSED:
                 viewHolder.icon.setImageResource(R.drawable.compressed);
@@ -116,7 +127,7 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
         this.listItemClickListener = listItemClickListener;
     }
 
-    protected class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView icon;
         private TextView name;
         private TextView lastModified;

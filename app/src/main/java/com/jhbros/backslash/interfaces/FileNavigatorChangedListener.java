@@ -15,16 +15,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  **************************************************************************************************/
 
-
 package com.jhbros.backslash.interfaces;
 
 /*
- * Created by javed
+ * Created by javed on 10/21/2018
  */
+
 
 import java.io.File;
 
-
-public interface ListItemClickListener {
-    void onClick(File f);
+public interface FileNavigatorChangedListener {
+    void onNavigationChanged(File f);
 }

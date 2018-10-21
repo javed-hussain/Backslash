@@ -15,10 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  **************************************************************************************************/
 
-package com.jhbros.backslash.interfaces;
+package com.jhbros.backslash.exceptions;
 
-import java.io.File;
+/*
+ * Created by javed on 10/21/2018
+ */
 
-public interface OnFolderLocationChangeListner {
-    void onFolderLocationChange(File file);
+public class FileFormatsException extends Exception {
+    public FileFormatsException(String message) {
+        super(message);
+    }
 }

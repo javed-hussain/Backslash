@@ -4,7 +4,6 @@
       <element module="All" copyright="backslash" />
     </module2copyright>
     <LanguageOptions name="XML">
-      <option name="fileTypeOverride" value="3" />
       <option name="relativeBefore" value="false" />
       <option name="separateBefore" value="true" />
       <option name="separateAfter" value="true" />
