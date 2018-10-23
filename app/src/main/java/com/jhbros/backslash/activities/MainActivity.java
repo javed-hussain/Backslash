@@ -29,23 +29,14 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.adapters.MultiWindowExplorerAdapter;
 import com.jhbros.backslash.fragments.ExplorerFragment;
@@ -56,6 +47,17 @@ import com.jhbros.backslash.utils.FilesUtil;
 import com.jhbros.backslash.views.FilePathNavigationView;
 
 import java.io.File;
+
+import javax.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends AppCompatActivity implements Observer {
     private DrawerLayout drawerLayout;
@@ -148,18 +150,34 @@ public class MainActivity extends AppCompatActivity implements Observer {
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
         }
 
+        setupSearch(menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setupSearch(Menu menu) {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.file_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        LinearLayout searchBar = searchView.findViewById(android.support.v7.appcompat.R.id.search_bar);
-        EditText editText = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        LinearLayout searchBar = searchView.findViewById(androidx.appcompat.R.id.search_bar);
+        EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(getResources().getColor(R.color.white));
         editText.setHintTextColor(getResources().getColor(R.color.off_white));
         editText.setBackgroundResource(R.drawable.searchbar_edittext_background);
         searchView.setQueryHint("Search here...");
         searchBar.setLayoutTransition(new LayoutTransition());
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                ((ExplorerFragment) ((MultiWindowExplorerAdapter) pager.getAdapter()).getItem(pager.getCurrentItem())).setFiles(FilesUtil.searchFile(s, FilesUtil.getROOT()));
+                return true;
+            }
 
-        return super.onCreateOptionsMenu(menu);
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
     }
 
     @Override

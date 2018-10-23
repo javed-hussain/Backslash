@@ -88,6 +88,19 @@ public class FilesUtil {
         return String.valueOf(format.format(val) + " " + units[i]);
     }
 
+    public static List<File> searchFile(String searchTerm, File root) {
+        List<File> files = new ArrayList<>();
+        for (File f : root.listFiles()) {
+            if (f.getName().matches("(.*)" + searchTerm + "(.*)")) {
+                files.add(f);
+            }
+            if (f.isDirectory()) {
+                files.addAll(searchFile(searchTerm, f));
+            }
+        }
+        return files;
+    }
+
     public static boolean isRoot(File f) {
         return f.getAbsolutePath().equalsIgnoreCase(ROOT.getAbsolutePath());
     }

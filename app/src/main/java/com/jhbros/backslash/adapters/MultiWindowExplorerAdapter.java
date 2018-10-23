@@ -22,10 +22,6 @@ package com.jhbros.backslash.adapters;
  */
 
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-
 import com.jhbros.backslash.activities.MainActivity;
 import com.jhbros.backslash.fragments.ExplorerFragment;
 import com.jhbros.backslash.views.FilePathNavigationView;
@@ -33,6 +29,10 @@ import com.jhbros.backslash.views.FilePathNavigationView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 public class MultiWindowExplorerAdapter extends FragmentPagerAdapter {
     private int pageCount;

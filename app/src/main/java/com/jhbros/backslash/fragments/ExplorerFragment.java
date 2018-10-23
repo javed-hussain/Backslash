@@ -24,11 +24,6 @@ package com.jhbros.backslash.fragments;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +40,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class ExplorerFragment extends Fragment implements Observable {
     private FilesListRecyclerViewAdapter adapter;
     private List<Observer> observers = new ArrayList<>();
@@ -57,7 +58,7 @@ public class ExplorerFragment extends Fragment implements Observable {
 
         RecyclerView filesList = view.findViewById(R.id.files_list);
         filesList.setHasFixedSize(true);
-        filesList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        filesList.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         adapter = new FilesListRecyclerViewAdapter(getContext(), FilesUtil.getSortedFiles(Environment.getExternalStorageDirectory()));
         adapter.setListItemClickListener(new ListItemClickListener() {
             @Override
@@ -97,5 +98,10 @@ public class ExplorerFragment extends Fragment implements Observable {
     @Override
     public void unsubscribeObserver(Observer observer) {
         observers.remove(observer);
+    }
+
+    public void setFiles(List<File> files) {
+        this.adapter.setFiles(files);
+        this.adapter.notifyDataSetChanged();
     }
 }
