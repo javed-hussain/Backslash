@@ -27,6 +27,7 @@ import android.os.Environment;
 
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.exceptions.FileFormatsException;
+import com.jhbros.backslash.models.FileItem;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -49,23 +50,23 @@ public class FilesUtil {
         FilesUtil.ROOT = ROOT;
     }
 
-    public static List<File> getSortedFiles(File f) {
-        List<File> returnedFiles = new ArrayList<>();
-        final List<File> files = new ArrayList<>();
-        List<File> directories = new ArrayList<>();
+    public static List<FileItem> getSortedFiles(File f) {
+        List<FileItem> returnedFiles = new ArrayList<>();
+        List<FileItem> files = new ArrayList<>();
+        List<FileItem> directories = new ArrayList<>();
         for (File file : f.listFiles()) {
             if (!(!showHidden && file.getName().startsWith("."))) {
                 if (file.isDirectory()) {
-                    directories.add(file);
+                    directories.add(new FileItem(file));
                 } else {
-                    files.add(file);
+                    files.add(new FileItem(file));
                 }
             }
         }
-        Collections.sort(directories, new Comparator<File>() {
+        Collections.sort(directories, new Comparator<FileItem>() {
             @Override
-            public int compare(File o1, File o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            public int compare(FileItem o1, FileItem o2) {
+                return o1.getFile().getName().toLowerCase().compareTo(o2.getFile().getName().toLowerCase());
             }
         });
         Collections.sort(files);
@@ -88,11 +89,11 @@ public class FilesUtil {
         return String.valueOf(format.format(val) + " " + units[i]);
     }
 
-    public static List<File> searchFile(String searchTerm, File root) {
-        List<File> files = new ArrayList<>();
+    public static List<FileItem> searchFile(String searchTerm, File root) {
+        List<FileItem> files = new ArrayList<>();
         for (File f : root.listFiles()) {
             if (f.getName().toUpperCase().matches("(.*)" + searchTerm.toUpperCase() + "(.*)")) {
-                files.add(f);
+                files.add(new FileItem(f));
             }
             if (f.isDirectory()) {
                 files.addAll(searchFile(searchTerm, f));

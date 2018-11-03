@@ -44,6 +44,7 @@ import com.jhbros.backslash.fragments.ExplorerFragment;
 import com.jhbros.backslash.interfaces.FileNavigatorChangedListener;
 import com.jhbros.backslash.interfaces.Observable;
 import com.jhbros.backslash.interfaces.Observer;
+import com.jhbros.backslash.models.FileItem;
 import com.jhbros.backslash.utils.FilesUtil;
 import com.jhbros.backslash.views.FilePathNavigationView;
 
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
             public void onClick(View v) {
                 pathNavigationView.setSearchTerm("Search Results");
                 setHomeIcon(R.drawable.back);
-                currentFragment.setFiles(new ArrayList<File>());
+                currentFragment.setFiles(new ArrayList<FileItem>());
             }
         });
 
@@ -262,5 +263,16 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @Override
     public void onUpdate(Observable observable, File changedFolder) {
         this.currentFolder = changedFolder;
+    }
+
+    @Override
+    public void onSelectionModeChanged(boolean mode, int noOfSelections) {
+        Log.d(TAG, "Selection Mode changed : " + mode);
+        if (noOfSelections > 0) {
+            setHomeIcon(R.drawable.back);
+            getSupportActionBar().setTitle(noOfSelections + " Selected");
+        } else {
+            setupToolbarAndDrawer();
+        }
     }
 }

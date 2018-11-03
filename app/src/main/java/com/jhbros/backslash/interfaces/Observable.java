@@ -22,5 +22,7 @@ public interface Observable {
 
     void notifyObservers();
 
+    void notifyObservers(boolean isSelectionMode, int noOfSelections);
+
     void unsubscribeObserver(Observer observer);
 }

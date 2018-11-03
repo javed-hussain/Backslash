@@ -27,4 +27,6 @@ import java.io.File;
 
 public interface ListItemClickListener {
     void onClick(File f);
+
+    void onClick(boolean mode, int noOfSelections);
 }

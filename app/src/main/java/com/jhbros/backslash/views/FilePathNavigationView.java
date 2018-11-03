@@ -156,6 +156,11 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
         this.setValues(changedFolder);
     }
 
+    @Override
+    public void onSelectionModeChanged(boolean mode, int noOfSelections) {
+        //No need for any action
+    }
+
     public void setNavigatorChangedListener(FileNavigatorChangedListener navigatorChangedListener) {
         this.navigatorChangedListener = navigatorChangedListener;
     }

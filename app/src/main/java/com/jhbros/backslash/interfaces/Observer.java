@@ -25,4 +25,6 @@ import java.io.File;
 
 public interface Observer {
     void onUpdate(Observable observable, File changedFolder);
+
+    void onSelectionModeChanged(boolean mode, int noOfSelections);
 }

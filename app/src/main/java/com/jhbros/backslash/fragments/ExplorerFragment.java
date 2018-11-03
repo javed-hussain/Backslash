@@ -33,6 +33,7 @@ import com.jhbros.backslash.adapters.FilesListRecyclerViewAdapter;
 import com.jhbros.backslash.interfaces.ListItemClickListener;
 import com.jhbros.backslash.interfaces.Observable;
 import com.jhbros.backslash.interfaces.Observer;
+import com.jhbros.backslash.models.FileItem;
 import com.jhbros.backslash.utils.FileOpener;
 import com.jhbros.backslash.utils.FilesUtil;
 
@@ -82,6 +83,11 @@ public class ExplorerFragment extends Fragment implements Observable {
                 }
                 adapter.notifyDataSetChanged();
             }
+
+            @Override
+            public void onClick(boolean mode, int noOfSelections) {
+                notifyObservers(mode, noOfSelections);
+            }
         });
         filesList.setAdapter(adapter);
         return view;
@@ -106,11 +112,18 @@ public class ExplorerFragment extends Fragment implements Observable {
     }
 
     @Override
+    public void notifyObservers(boolean isSelectionMode, int noOfSelections) {
+        for (Observer ob : observers) {
+            ob.onSelectionModeChanged(isSelectionMode, noOfSelections);
+        }
+    }
+
+    @Override
     public void unsubscribeObserver(Observer observer) {
         observers.remove(observer);
     }
 
-    public void setFiles(List<File> files) {
+    public void setFiles(List<FileItem> files) {
         setProcessing(true);
         this.adapter.setFiles(files);
         this.adapter.notifyDataSetChanged();

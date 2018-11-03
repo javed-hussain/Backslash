@@ -23,6 +23,7 @@ package com.jhbros.backslash.adapters;
 
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.exceptions.FileFormatsException;
 import com.jhbros.backslash.interfaces.ListItemClickListener;
+import com.jhbros.backslash.models.FileItem;
 import com.jhbros.backslash.utils.FilesUtil;
 
 import java.io.File;
@@ -47,10 +49,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesListRecyclerViewAdapter.ViewHolder> {
     private Context context;
-    private List<File> files;
+    private List<FileItem> files;
+    private boolean isSelectionMode = false;
+    private int noOfSelections = 0;
     private ListItemClickListener listItemClickListener;
 
-    public FilesListRecyclerViewAdapter(Context context, List<File> files) {
+    public FilesListRecyclerViewAdapter(Context context, List<FileItem> files) {
         this.context = context;
         this.files = files;
     }
@@ -63,8 +67,8 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        final File f = files.get(i);
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
+        final File f = files.get(i).getFile();
         try {
             setIcon(f, viewHolder);
         } catch (FileFormatsException e) {
@@ -78,10 +82,49 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat(context.getString(R.string.lastModifiedDateFormat), Locale.ENGLISH);
         viewHolder.lastModified.setText(dateFormat.format(new Date(f.lastModified())));
+        Resources res = context.getResources();
+        viewHolder.view.setBackgroundColor(files.get(i).isSelected() ? res.getColor(R.color.off_primary) : res.getColor(R.color.white));
         viewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listItemClickListener != null) listItemClickListener.onClick(f);
+                if (isSelectionMode) {
+                    if (files.get(i).isSelected()) {
+                        files.get(i).setSelected(false);
+                        noOfSelections--;
+                        if (noOfSelections == 0) {
+                            isSelectionMode = false;
+                        }
+                    } else {
+                        files.get(i).setSelected(true);
+                        noOfSelections++;
+                    }
+                    notifyDataSetChanged();
+                    if (listItemClickListener != null)
+                        listItemClickListener.onClick(isSelectionMode, noOfSelections);
+                } else {
+                    if (listItemClickListener != null) listItemClickListener.onClick(f);
+                }
+            }
+        });
+        viewHolder.view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (files.get(i).isSelected()) {
+                    files.get(i).setSelected(false);
+                    noOfSelections--;
+                    if (noOfSelections == 0) {
+                        isSelectionMode = false;
+                    }
+                    notifyDataSetChanged();
+                } else {
+                    files.get(i).setSelected(true);
+                    noOfSelections++;
+                    isSelectionMode = true;
+                    notifyDataSetChanged();
+                }
+                if (listItemClickListener != null)
+                    listItemClickListener.onClick(isSelectionMode, noOfSelections);
+                return false;
             }
         });
     }
@@ -128,12 +171,20 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
         this.listItemClickListener = listItemClickListener;
     }
 
+    public void setFiles(List<FileItem> files) {
+        this.files = files;
+        this.noOfSelections = 0;
+        this.isSelectionMode = false;
+        if (listItemClickListener != null)
+            listItemClickListener.onClick(isSelectionMode, noOfSelections);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView icon;
         private TextView name;
         private TextView lastModified;
         private TextView size;
-        private View view;
+        private CardView view;
 
         private ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -141,12 +192,8 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
             name = itemView.findViewById(R.id.name);
             lastModified = itemView.findViewById(R.id.last_modified);
             size = itemView.findViewById(R.id.size);
-            view = itemView;
+            view = (CardView) itemView;
         }
     }
 
-
-    public void setFiles(List<File> files) {
-        this.files = files;
-    }
 }
