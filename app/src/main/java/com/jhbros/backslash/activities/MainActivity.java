@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -47,9 +48,11 @@ import com.jhbros.backslash.utils.FilesUtil;
 import com.jhbros.backslash.views.FilePathNavigationView;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -64,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
     private FilePathNavigationView pathNavigationView;
     private ViewPager pager;
     private File currentFolder = FilesUtil.getROOT();
+    private ExplorerFragment currentFragment;
+    private SearchView searchView;
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
         pager.setOffscreenPageLimit(0);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(pager, true);
+        currentFragment = ((ExplorerFragment) adapter.getItem(0));
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -99,7 +105,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
             @Override
             public void onPageSelected(int i) {
-                ((ExplorerFragment) adapter.getItem(i)).notifyObservers();
+                currentFragment = ((ExplorerFragment) adapter.getItem(i));
+                currentFragment.notifyObservers();
             }
 
             @Override
@@ -124,10 +131,9 @@ public class MainActivity extends AppCompatActivity implements Observer {
         toolbar.setSubtitleTextAppearance(this, R.style.subtitle);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
-        }
+
+        setHomeIcon(R.drawable.menu);
+
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -140,6 +146,13 @@ public class MainActivity extends AppCompatActivity implements Observer {
                     }
                 });
         navigationView.setItemIconTintList(null);
+    }
+
+    private void setHomeIcon(@DrawableRes int id) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(id);
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -157,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     private void setupSearch(Menu menu) {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.file_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.file_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         LinearLayout searchBar = searchView.findViewById(androidx.appcompat.R.id.search_bar);
         EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
@@ -166,10 +179,33 @@ public class MainActivity extends AppCompatActivity implements Observer {
         editText.setBackgroundResource(R.drawable.searchbar_edittext_background);
         searchView.setQueryHint("Search here...");
         searchBar.setLayoutTransition(new LayoutTransition());
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pathNavigationView.setSearchTerm("Search Results");
+                setHomeIcon(R.drawable.back);
+                currentFragment.setFiles(new ArrayList<File>());
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                pathNavigationView.setValues(currentFolder);
+                setHomeIcon(R.drawable.menu);
+                currentFragment.setFiles(FilesUtil.getSortedFiles(currentFolder));
+                return false;
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                ((ExplorerFragment) ((MultiWindowExplorerAdapter) pager.getAdapter()).getItem(pager.getCurrentItem())).setFiles(FilesUtil.searchFile(s, FilesUtil.getROOT()));
+                currentFragment.setProcessing(true);
+                pathNavigationView.setSearchTerm(String.format("Search results for - \"%s\"", s));
+                currentFragment.setFiles(FilesUtil.searchFile(s, FilesUtil.getROOT()));
+                currentFragment.setProcessing(false);
                 return true;
             }
 
@@ -192,6 +228,10 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void onBackPressed() {
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+            return;
+        }
         if (FilesUtil.isRoot(this.currentFolder)) {
             Log.d(TAG, "Inside ROOT");
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
@@ -213,7 +253,9 @@ public class MainActivity extends AppCompatActivity implements Observer {
             Log.d(TAG, "Not Inside ROOT");
             this.currentFolder = currentFolder.getParentFile();
             this.pathNavigationView.setValues(this.currentFolder);
-            ((MultiWindowExplorerAdapter) pager.getAdapter()).navigateTo(this.pager.getCurrentItem(), this.currentFolder);
+            MultiWindowExplorerAdapter adapter = (MultiWindowExplorerAdapter) pager.getAdapter();
+            if (adapter != null)
+                adapter.navigateTo(this.pager.getCurrentItem(), this.currentFolder);
         }
     }
 

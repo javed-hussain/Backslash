@@ -47,6 +47,8 @@ import java.util.List;
 public class FilePathNavigationView extends LinearLayout implements Observer {
     private Context context;
     private FileNavigatorChangedListener navigatorChangedListener;
+    private LinearLayout layout;
+    private HorizontalScrollView scrollView;
 
     public FilePathNavigationView(Context context) {
         super(context);
@@ -82,28 +84,30 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
         TypedArray a = ctx.obtainStyledAttributes(attrs,
                 R.styleable.FilePathNavigationView, defStyleAttr, defStyleRes);
         a.recycle();
-    }
-
-    private void setView(List<File> files) {
         removeAllViews();
-        HorizontalScrollView scrollView = new HorizontalScrollView(context);
+        scrollView = new HorizontalScrollView(context);
         scrollView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         scrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         scrollView.setHorizontalScrollBarEnabled(false);
         scrollView.setVerticalScrollBarEnabled(false);
         addView(scrollView);
-        LinearLayout layout = new LinearLayout(context);
+        layout = new LinearLayout(context);
         layout.setPadding(60, 20, 60, 20);
         layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         layout.setOrientation(HORIZONTAL);
         layout.setGravity(Gravity.CENTER);
         scrollView.addView(layout);
+    }
+
+    private void setView(List<File> files) {
+        if (layout == null || scrollView == null) {
+            return;
+        }
+        layout.removeAllViews();
         int count = 0;
         for (final File file : files) {
-            TextView textView = new TextView(context);
-            textView.setTextSize(14);
-            textView.setGravity(Gravity.CENTER);
-            textView.setText(FilesUtil.isRoot(file) ? "INTERNAL STORAGE" : file.getName().toUpperCase());
+            String a = FilesUtil.isRoot(file) ? "INTERNAL STORAGE" : file.getName().toUpperCase();
+            TextView textView = getTextView(a);
             textView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -127,6 +131,15 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
         scrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
     }
 
+    private TextView getTextView(final String a) {
+        TextView textView = new TextView(context);
+        textView.setTextSize(14);
+        textView.setGravity(Gravity.CENTER);
+        textView.setText(a);
+
+        return textView;
+    }
+
     public void setValues(File folder) {
         List<File> navigator = new ArrayList<>();
         while (folder != null && !FilesUtil.isRoot(folder)) {
@@ -145,5 +158,14 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
 
     public void setNavigatorChangedListener(FileNavigatorChangedListener navigatorChangedListener) {
         this.navigatorChangedListener = navigatorChangedListener;
+    }
+
+    public void setSearchTerm(String searchTerm) {
+        if (layout != null) {
+            layout.removeAllViews();
+            TextView textView = getTextView(searchTerm);
+            textView.setTextColor(getResources().getColor(R.color.white));
+            layout.addView(textView);
+        }
     }
 }

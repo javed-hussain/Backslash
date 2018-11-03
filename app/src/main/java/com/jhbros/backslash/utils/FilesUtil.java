@@ -91,7 +91,7 @@ public class FilesUtil {
     public static List<File> searchFile(String searchTerm, File root) {
         List<File> files = new ArrayList<>();
         for (File f : root.listFiles()) {
-            if (f.getName().matches("(.*)" + searchTerm + "(.*)")) {
+            if (f.getName().toUpperCase().matches("(.*)" + searchTerm.toUpperCase() + "(.*)")) {
                 files.add(f);
             }
             if (f.isDirectory()) {

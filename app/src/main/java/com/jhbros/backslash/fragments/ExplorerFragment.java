@@ -45,17 +45,27 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ExplorerFragment extends Fragment implements Observable {
     private FilesListRecyclerViewAdapter adapter;
     private List<Observer> observers = new ArrayList<>();
     private File currentFolder = FilesUtil.getROOT();
+    private SwipeRefreshLayout refreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.explorer_fragment, container, false);
 
+        refreshLayout = view.findViewById(R.id.refresh_layout);
+        refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark));
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setFiles(FilesUtil.getSortedFiles(currentFolder));
+            }
+        });
         RecyclerView filesList = view.findViewById(R.id.files_list);
         filesList.setHasFixedSize(true);
         filesList.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
@@ -101,7 +111,13 @@ public class ExplorerFragment extends Fragment implements Observable {
     }
 
     public void setFiles(List<File> files) {
+        setProcessing(true);
         this.adapter.setFiles(files);
         this.adapter.notifyDataSetChanged();
+        setProcessing(false);
+    }
+
+    public void setProcessing(boolean isProcessing) {
+        refreshLayout.setRefreshing(isProcessing);
     }
 }
