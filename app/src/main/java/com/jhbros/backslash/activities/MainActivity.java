@@ -29,7 +29,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +54,7 @@ import javax.annotation.Nullable;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.SearchView;
@@ -126,12 +126,16 @@ public class MainActivity extends AppCompatActivity implements Observer {
     }
 
     private void setupToolbarAndDrawer() {
-        Toolbar toolbar = findViewById(R.id.main_toolbar);
-        toolbar.setTitle(R.string.app_name);
-        toolbar.setSubtitle("5 Folders, 15 Files");
-        toolbar.setSubtitleTextAppearance(this, R.style.subtitle);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        setSupportActionBar(toolbar);
+        if (getSupportActionBar() == null) {
+            Toolbar toolbar = findViewById(R.id.main_toolbar);
+            toolbar.setSubtitleTextAppearance(this, R.style.subtitle);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+            setSupportActionBar(toolbar);
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(R.string.app_name);
+        actionBar.setSubtitle("5 Folders, 15 Files");
 
         setHomeIcon(R.drawable.menu);
 
@@ -234,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
             return;
         }
         if (FilesUtil.isRoot(this.currentFolder)) {
-            Log.d(TAG, "Inside ROOT");
+//            Log.d(TAG, "Inside ROOT");
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
                     .setTitle(R.string.app_name)
                     .setMessage("Are you sure you want to exit?")
@@ -251,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
                     });
             builder.create().show();
         } else {
-            Log.d(TAG, "Not Inside ROOT");
+//            Log.d(TAG, "Not Inside ROOT");
             this.currentFolder = currentFolder.getParentFile();
             this.pathNavigationView.setValues(this.currentFolder);
             MultiWindowExplorerAdapter adapter = (MultiWindowExplorerAdapter) pager.getAdapter();
@@ -267,10 +271,11 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void onSelectionModeChanged(boolean mode, int noOfSelections) {
-        Log.d(TAG, "Selection Mode changed : " + mode);
         if (noOfSelections > 0) {
             setHomeIcon(R.drawable.back);
             getSupportActionBar().setTitle(noOfSelections + " Selected");
+            getSupportActionBar().setSubtitle("");
+
         } else {
             setupToolbarAndDrawer();
         }
