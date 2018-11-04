@@ -33,11 +33,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.jhbros.backslash.R;
+import com.jhbros.backslash.adapters.DrawerExpandableAdapter;
 import com.jhbros.backslash.adapters.MultiWindowExplorerAdapter;
 import com.jhbros.backslash.fragments.ExplorerFragment;
 import com.jhbros.backslash.interfaces.FileNavigatorChangedListener;
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
     private File currentFolder = FilesUtil.getROOT();
     private ExplorerFragment currentFragment;
     private SearchView searchView;
+    private ExpandableListView menuList;
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -151,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
                     }
                 });
         navigationView.setItemIconTintList(null);
+        menuList = navigationView.findViewById(R.id.menu_list);
+        menuList.setAdapter(new DrawerExpandableAdapter());
     }
 
     private void setHomeIcon(@DrawableRes int id) {
