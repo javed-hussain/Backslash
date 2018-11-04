@@ -28,8 +28,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -129,11 +127,11 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
                 return false;
             }
         });
-        if (!isSelectionMode) {
+        /*if (!isSelectionMode) {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.list_item_anim);
-            animation.setDuration(200 + (i > 10 ? 0 : i * 100));
+            animation.setDuration((i > 10 ? 0 : 500 + (i * 100)));
             viewHolder.view.startAnimation(animation);
-        }
+        }*/
     }
 
     private void setIcon(File f, ViewHolder viewHolder) throws FileFormatsException {
@@ -202,5 +200,4 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
             view = (CardView) itemView;
         }
     }
-
 }

@@ -22,11 +22,14 @@ package com.jhbros.backslash.fragments;
  */
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.adapters.FilesListRecyclerViewAdapter;
@@ -53,6 +56,7 @@ public class ExplorerFragment extends Fragment implements Observable {
     private List<Observer> observers = new ArrayList<>();
     private File currentFolder = FilesUtil.getROOT();
     private SwipeRefreshLayout refreshLayout;
+    private RecyclerView filesList;
 
     @Nullable
     @Override
@@ -65,9 +69,10 @@ public class ExplorerFragment extends Fragment implements Observable {
             @Override
             public void onRefresh() {
                 setFiles(FilesUtil.getSortedFiles(currentFolder));
+
             }
         });
-        RecyclerView filesList = view.findViewById(R.id.files_list);
+        filesList = view.findViewById(R.id.files_list);
         filesList.setHasFixedSize(true);
         filesList.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         adapter = new FilesListRecyclerViewAdapter(getContext(), FilesUtil.getSortedFiles(Environment.getExternalStorageDirectory()));
@@ -78,10 +83,10 @@ public class ExplorerFragment extends Fragment implements Observable {
                     currentFolder = f;
                     adapter.setFiles(FilesUtil.getSortedFiles(f));
                     notifyObservers();
+                    runLayoutAnimation(filesList);
                 } else {
                     FileOpener.openFile(f, getContext());
                 }
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -90,13 +95,14 @@ public class ExplorerFragment extends Fragment implements Observable {
             }
         });
         filesList.setAdapter(adapter);
+        runLayoutAnimation(filesList);
         return view;
     }
 
     public void navigateTo(File f) {
         this.currentFolder = f;
         this.adapter.setFiles(FilesUtil.getSortedFiles(f));
-        adapter.notifyDataSetChanged();
+        runLayoutAnimation(filesList);
     }
 
     @Override
@@ -126,11 +132,24 @@ public class ExplorerFragment extends Fragment implements Observable {
     public void setFiles(List<FileItem> files) {
         setProcessing(true);
         this.adapter.setFiles(files);
-        this.adapter.notifyDataSetChanged();
+        notifyObservers();
+        runLayoutAnimation(filesList);
         setProcessing(false);
     }
 
     public void setProcessing(boolean isProcessing) {
         refreshLayout.setRefreshing(isProcessing);
     }
+
+
+    private void runLayoutAnimation(final RecyclerView recyclerView) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down);
+
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
+    }
+
 }
