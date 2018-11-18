@@ -18,12 +18,23 @@
                                 <PersistentState>
                                   <option name="children">
                                     <map>
+                                      <entry key="backgroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="99" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="foregroundImage">
                                         <value>
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="80" />
+                                                <entry key="scalingPercent" value="108" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -34,11 +45,14 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="D:\Development\AndroidProjects\Backslash\app\src\main\res\drawable\ic_launcher_background.xml" />
-                                      <entry key="foregroundImage" value="C:\Users\javed\OneDrive\Desktop\Asset 3.png" />
+                                      <entry key="foregroundImage" value="C:\Users\javed\OneDrive\Desktop\Artboard 1@2x.png" />
+                                      <entry key="generateLegacyIcon" value="false" />
+                                      <entry key="generateRoundIcon" value="false" />
+                                      <entry key="generateWebIcon" value="false" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
+                                      <entry key="previewDensity" value="XXXHIGH" />
                                       <entry key="webIconShape" value="CIRCLE" />
                                     </map>
                                   </option>
@@ -79,7 +93,6 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="paddingPercent" value="5" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -90,19 +103,16 @@
                                   </option>
                                   <option name="values">
                                     <map>
+                                      <entry key="assetType" value="IMAGE" />
                                       <entry key="backgroundColor" value="084d61" />
-                                      <entry key="iconShape" value="CIRCLE" />
-                                      <entry key="imageAsset" value="C:\Users\javed\OneDrive\Desktop\Asset 4.png" />
+                                      <entry key="cropped" value="true" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="C:\Users\javed\OneDrive\Desktop\Artboard 1@2x.png" />
                                     </map>
                                   </option>
                                 </PersistentState>
                               </value>
                             </entry>
-                          </map>
-                        </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>
