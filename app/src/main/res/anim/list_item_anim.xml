@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="400"
+    android:duration="300"
     android:shareInterpolator="@android:anim/decelerate_interpolator">
     <translate
-        android:fromYDelta="20%"
+        android:fromYDelta="40%"
         android:toXDelta="0%" />
     <alpha
         android:fromAlpha="0"

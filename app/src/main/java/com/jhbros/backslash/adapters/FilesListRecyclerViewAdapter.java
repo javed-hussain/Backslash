@@ -83,7 +83,7 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
         SimpleDateFormat dateFormat = new SimpleDateFormat(context.getString(R.string.lastModifiedDateFormat), Locale.ENGLISH);
         viewHolder.lastModified.setText(dateFormat.format(new Date(f.lastModified())));
         Resources res = context.getResources();
-        viewHolder.view.setBackgroundColor(files.get(i).isSelected() ? res.getColor(R.color.off_primary) : res.getColor(R.color.white));
+        viewHolder.view.setCardBackgroundColor(files.get(i).isSelected() ? res.getColor(R.color.off_primary) : res.getColor(R.color.white));
         viewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

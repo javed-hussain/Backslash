@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
     private ExplorerFragment currentFragment;
     private SearchView searchView;
     private ExpandableListView menuList;
+    private int noOfSelections;
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -238,6 +239,13 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void onBackPressed() {
+        if (noOfSelections > 0) {
+            noOfSelections = 0;
+            MultiWindowExplorerAdapter adapter = (MultiWindowExplorerAdapter) pager.getAdapter();
+            if (adapter != null)
+                adapter.navigateTo(this.pager.getCurrentItem(), this.currentFolder);
+            return;
+        }
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
             return;
@@ -277,11 +285,13 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @Override
     public void onSelectionModeChanged(boolean mode, int noOfSelections) {
         if (noOfSelections > 0) {
+            this.noOfSelections = noOfSelections;
             setHomeIcon(R.drawable.back);
             getSupportActionBar().setTitle(noOfSelections + " Selected");
             getSupportActionBar().setSubtitle("");
 
         } else {
+            noOfSelections = 0;
             setupToolbarAndDrawer();
         }
     }
