@@ -72,10 +72,9 @@ public class MainActivity extends AppCompatActivity implements Observer {
     private File currentFolder = FilesUtil.getROOT();
     private ExplorerFragment currentFragment;
     private SearchView searchView;
-    private ExpandableListView menuList;
-    private int noOfSelections;
+    private int noOfSelections = 0;
 
-    private static final String TAG = MainActivity.class.getName();
+//    private static final String TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
                     }
                 });
         navigationView.setItemIconTintList(null);
-        menuList = navigationView.findViewById(R.id.menu_list);
+        ExpandableListView menuList = navigationView.findViewById(R.id.menu_list);
         menuList.setAdapter(new DrawerExpandableAdapter());
     }
 
@@ -169,12 +168,15 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        if (menu instanceof MenuBuilder) {
-            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        if (noOfSelections > 0) {
+            getMenuInflater().inflate(R.menu.file_operation_menu, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.main_menu, menu);
+            if (menu instanceof MenuBuilder) {
+                ((MenuBuilder) menu).setOptionalIconsVisible(true);
+            }
+            setupSearch(menu);
         }
-
-        setupSearch(menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -231,7 +233,12 @@ public class MainActivity extends AppCompatActivity implements Observer {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
+                if (noOfSelections > 0) {
+                    onSelectionModeChanged(false, 0);
+                    refresh();
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -240,10 +247,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @Override
     public void onBackPressed() {
         if (noOfSelections > 0) {
-            noOfSelections = 0;
-            MultiWindowExplorerAdapter adapter = (MultiWindowExplorerAdapter) pager.getAdapter();
-            if (adapter != null)
-                adapter.navigateTo(this.pager.getCurrentItem(), this.currentFolder);
+            onSelectionModeChanged(false, 0);
+            refresh();
             return;
         }
         if (!searchView.isIconified()) {
@@ -271,11 +276,16 @@ public class MainActivity extends AppCompatActivity implements Observer {
 //            Log.d(TAG, "Not Inside ROOT");
             this.currentFolder = currentFolder.getParentFile();
             this.pathNavigationView.setValues(this.currentFolder);
-            MultiWindowExplorerAdapter adapter = (MultiWindowExplorerAdapter) pager.getAdapter();
-            if (adapter != null)
-                adapter.navigateTo(this.pager.getCurrentItem(), this.currentFolder);
+            refresh();
         }
     }
+
+    private void refresh() {
+        MultiWindowExplorerAdapter adapter = (MultiWindowExplorerAdapter) pager.getAdapter();
+        if (adapter != null)
+            adapter.navigateTo(this.pager.getCurrentItem(), this.currentFolder);
+    }
+
 
     @Override
     public void onUpdate(Observable observable, File changedFolder) {
@@ -284,15 +294,20 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void onSelectionModeChanged(boolean mode, int noOfSelections) {
-        if (noOfSelections > 0) {
-            this.noOfSelections = noOfSelections;
-            setHomeIcon(R.drawable.back);
-            getSupportActionBar().setTitle(noOfSelections + " Selected");
-            getSupportActionBar().setSubtitle("");
+        if (noOfSelections != this.noOfSelections) {
+            if (noOfSelections > 0) {
+                this.noOfSelections = noOfSelections;
+                setHomeIcon(R.drawable.back);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setTitle(noOfSelections + " Selected");
+                    getSupportActionBar().setSubtitle("");
+                }
 
-        } else {
-            noOfSelections = 0;
-            setupToolbarAndDrawer();
+            } else {
+                this.noOfSelections = 0;
+                setupToolbarAndDrawer();
+            }
+            invalidateOptionsMenu();
         }
     }
 }

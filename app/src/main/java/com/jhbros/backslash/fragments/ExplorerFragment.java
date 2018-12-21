@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Toast;
 
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.adapters.FilesListRecyclerViewAdapter;
@@ -50,6 +51,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import jahirfiquitiva.libs.fabsmenu.FABsMenu;
+import jahirfiquitiva.libs.fabsmenu.TitleFAB;
 
 public class ExplorerFragment extends Fragment implements Observable {
     private FilesListRecyclerViewAdapter adapter;
@@ -57,11 +60,18 @@ public class ExplorerFragment extends Fragment implements Observable {
     private File currentFolder = FilesUtil.getROOT();
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView filesList;
+    private FABsMenu menu;
+    private TitleFAB newFolder, newFile, newConnection;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.explorer_fragment, container, false);
+
+        menu = view.findViewById(R.id.fabs_menu);
+        newFolder = view.findViewById(R.id.menu_new_folder);
+        newFile = view.findViewById(R.id.menu_new_file);
+        newConnection = view.findViewById(R.id.menu_new_cloud);
 
         refreshLayout = view.findViewById(R.id.refresh_layout);
         refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark));
@@ -95,8 +105,31 @@ public class ExplorerFragment extends Fragment implements Observable {
             }
         });
         filesList.setAdapter(adapter);
+        menu.attachToRecyclerView(filesList);
         runLayoutAnimation(filesList);
+        setupMenus();
         return view;
+    }
+
+    private void setupMenus() {
+        newFolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "This menu will create a new Folder", Toast.LENGTH_SHORT).show();
+            }
+        });
+        newFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "This menu will create a new File", Toast.LENGTH_SHORT).show();
+            }
+        });
+        newConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "This menu will create a new Connection", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void navigateTo(File f) {
@@ -151,5 +184,4 @@ public class ExplorerFragment extends Fragment implements Observable {
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
     }
-
 }

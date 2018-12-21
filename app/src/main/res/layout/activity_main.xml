@@ -59,12 +59,13 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:transitionGroup="true"
             app:tabBackground="@drawable/tab_layout_background"
             app:tabGravity="center"
+            android:layout_centerHorizontal="true"
             app:tabIndicatorHeight="0dp"
             app:tabPaddingEnd="7dp"
             app:tabPaddingStart="7dp" />
