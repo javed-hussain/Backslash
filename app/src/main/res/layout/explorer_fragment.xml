@@ -42,6 +42,7 @@
             fab:fab_labelsPosition="left"
             fab:fab_menuMargins="16dp"
             fab:fab_moreButtonPlusIcon="@drawable/add"
+            fab:fab_moreButtonBackgroundColor="@color/colorAccent"
             fab:fab_moreButtonSize="normal">
 
             <!-- This is the item that appears at the top of the menu -->
@@ -51,6 +52,8 @@
                 android:layout_height="wrap_content"
                 fab:fabSize="mini"
                 fab:fab_title="New Folder"
+                fab:fab_title_backgroundColor="@color/colorPrimary"
+                fab:fab_title_textColor="@color/white"
                 fab:srcCompat="@drawable/folder" />
 
             <jahirfiquitiva.libs.fabsmenu.TitleFAB
@@ -59,6 +62,8 @@
                 android:layout_height="wrap_content"
                 fab:fabSize="mini"
                 fab:fab_title="New File"
+                fab:fab_title_backgroundColor="@color/colorPrimary"
+                fab:fab_title_textColor="@color/white"
                 fab:srcCompat="@drawable/file" />
 
             <jahirfiquitiva.libs.fabsmenu.TitleFAB
@@ -67,6 +72,8 @@
                 android:layout_height="wrap_content"
                 fab:fabSize="mini"
                 fab:fab_title="New Cloud Connection"
+                fab:fab_title_backgroundColor="@color/colorPrimary"
+                fab:fab_title_textColor="@color/white"
                 fab:srcCompat="@drawable/cloud" />
         </jahirfiquitiva.libs.fabsmenu.FABsMenu>
 

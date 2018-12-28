@@ -25,6 +25,7 @@ package com.jhbros.backslash.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,8 +41,10 @@ import com.jhbros.backslash.interfaces.Observer;
 import com.jhbros.backslash.models.FileItem;
 import com.jhbros.backslash.utils.FileOpener;
 import com.jhbros.backslash.utils.FilesUtil;
+import com.jhbros.backslash.views.CreateNewDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +82,6 @@ public class ExplorerFragment extends Fragment implements Observable {
             @Override
             public void onRefresh() {
                 setFiles(FilesUtil.getSortedFiles(currentFolder));
-
             }
         });
         filesList = view.findViewById(R.id.files_list);
@@ -115,19 +117,51 @@ public class ExplorerFragment extends Fragment implements Observable {
         newFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "This menu will create a new Folder", Toast.LENGTH_SHORT).show();
+                showDialog(false);
             }
         });
         newFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "This menu will create a new File", Toast.LENGTH_SHORT).show();
+                showDialog(true);
             }
         });
         newConnection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "This menu will create a new Connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void showDialog(final boolean isFile) {
+        menu.collapse();
+        final CreateNewDialog dialog = new CreateNewDialog(getContext(), isFile);
+        dialog.show();
+        dialog.attachCreateListner(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File f = new File(currentFolder.getAbsolutePath(), dialog.getText());
+                Log.d("File Created : ", f.getAbsolutePath());
+                if (!isFile) {
+                    f.mkdirs();
+                } else {
+                    try {
+                        f.createNewFile();
+                    } catch (IOException e) {
+                        Log.d("Could not create file: ", f.getAbsolutePath());
+                    }
+                }
+                dialog.dismiss();
+                setFiles(FilesUtil.getSortedFiles(currentFolder));
+            }
+        });
+        dialog.attachCancelListner(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                setFiles(FilesUtil.getSortedFiles(currentFolder));
             }
         });
     }

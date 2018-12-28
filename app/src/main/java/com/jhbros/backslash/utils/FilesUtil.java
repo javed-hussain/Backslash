@@ -24,6 +24,7 @@ package com.jhbros.backslash.utils;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.exceptions.FileFormatsException;
@@ -37,7 +38,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
+
 public class FilesUtil {
+
+    public static final String SD_CARD = "sdCard";
+    public static final String EXTERNAL_SD_CARD = "externalSdCard";
+    private static final String ENV_SECONDARY_STORAGE = "SECONDARY_STORAGE";
     private static final Boolean showHidden = false;
 
     private static File ROOT = Environment.getExternalStorageDirectory();
@@ -48,6 +55,15 @@ public class FilesUtil {
 
     public static void setROOT(File ROOT) {
         FilesUtil.ROOT = ROOT;
+    }
+
+
+    public static void getAllStorageLocations(Context ctx, String packageName) {
+        File[] f = ContextCompat.getExternalFilesDirs(ctx, null);
+        for (int i = 0; i < f.length; i++) {
+            String path = f[i].getParent().replace("/Android/data/", "").replace(packageName, "");
+            Log.d("DIRS : ", path); //sdcard and internal and usb
+        }
     }
 
     public static List<FileItem> getSortedFiles(File f) {

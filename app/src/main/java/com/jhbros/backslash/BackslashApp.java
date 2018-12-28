@@ -31,5 +31,6 @@ public class BackslashApp extends Application {
     public void onCreate() {
         super.onCreate();
         FilesUtil.FileType.setValuesFromResources(getApplicationContext());
+        FilesUtil.getAllStorageLocations(getApplicationContext(), getPackageName());
     }
 }
