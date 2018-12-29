@@ -218,4 +218,8 @@ public class ExplorerFragment extends Fragment implements Observable {
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
     }
+
+    public FilesListRecyclerViewAdapter getAdapter() {
+        return adapter;
+    }
 }

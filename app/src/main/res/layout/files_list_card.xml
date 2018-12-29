@@ -21,7 +21,9 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="0dp"
     android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackgroundBorderless">
+    android:elevation="0dp"
+    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"

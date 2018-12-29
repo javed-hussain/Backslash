@@ -6,6 +6,8 @@ package com.jhbros.backslash.models;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
+
 public class FileItem implements Comparable<FileItem> {
     private File file;
     private boolean isSelected = false;
@@ -29,5 +31,11 @@ public class FileItem implements Comparable<FileItem> {
     @Override
     public int compareTo(FileItem o) {
         return this.file.compareTo(o.getFile());
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "File : " + file.getAbsolutePath() + "\t\tSelected : " + isSelected;
     }
 }

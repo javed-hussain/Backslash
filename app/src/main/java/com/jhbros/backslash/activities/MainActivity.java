@@ -29,6 +29,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -254,8 +255,43 @@ public class MainActivity extends AppCompatActivity implements Observer {
                     drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
+            case R.id.cut:
+                handleCut();
+                break;
+            case R.id.copy:
+                handleCopy();
+                break;
+            case R.id.delete:
+                handleDelete();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void handleCopy() {
+    }
+
+    private void handleDelete() {
+        List<FileItem> removals = new ArrayList<>();
+        List<FileItem> files = currentFragment.getAdapter().getFiles();
+        for (int i = 0; i < files.size(); i++) {
+            FileItem f = files.get(i);
+            Log.d("Details", f.toString());
+            if (f.isSelected()) {
+                try {
+                    FilesUtil.cleanupDirectoriesAndFile(f.getFile());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                removals.add(f);
+            }
+        }
+        for (FileItem a : removals) files.remove(a);
+        currentFragment.setFiles(files);
+    }
+
+
+    private void handleCut() {
     }
 
     @Override

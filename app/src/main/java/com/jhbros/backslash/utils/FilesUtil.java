@@ -30,6 +30,8 @@ import com.jhbros.backslash.R;
 import com.jhbros.backslash.exceptions.FileFormatsException;
 import com.jhbros.backslash.models.FileItem;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -90,6 +92,15 @@ public class FilesUtil {
         returnedFiles.addAll(files);
         return returnedFiles;
 
+    }
+
+    public static void cleanupDirectoriesAndFile(final File home) throws Exception {
+        Log.d("Deleting ", home.getAbsolutePath());
+        if (home.isDirectory()) {
+            FileUtils.deleteDirectory(home);
+        } else {
+            FileUtils.forceDelete(home);
+        }
     }
 
     public static String convertSize(long bytes) {
