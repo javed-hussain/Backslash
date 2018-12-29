@@ -51,6 +51,7 @@ import com.jhbros.backslash.views.FilePathNavigationView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -214,11 +215,22 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public boolean onQueryTextSubmit(final String s) {
                 currentFragment.setProcessing(true);
                 pathNavigationView.setSearchTerm(String.format("Search results for - \"%s\"", s));
-                currentFragment.setFiles(FilesUtil.searchFile(s, FilesUtil.getROOT()));
-                currentFragment.setProcessing(false);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final List<FileItem> files = FilesUtil.searchFile(s, FilesUtil.getROOT());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                currentFragment.setFiles(files);
+                                currentFragment.setProcessing(false);
+                            }
+                        });
+                    }
+                }).start();
                 return true;
             }
 

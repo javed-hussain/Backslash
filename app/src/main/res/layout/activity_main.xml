@@ -85,7 +85,7 @@
             android:id="@+id/menu_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="180dp"
+            android:layout_marginTop="115dp"
             android:groupIndicator="@null">
 
         </ExpandableListView>

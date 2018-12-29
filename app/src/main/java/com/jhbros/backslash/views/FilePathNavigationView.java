@@ -49,6 +49,7 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
     private FileNavigatorChangedListener navigatorChangedListener;
     private LinearLayout layout;
     private HorizontalScrollView scrollView;
+    private boolean inSearch = false;
 
     public FilePathNavigationView(Context context) {
         super(context);
@@ -141,6 +142,7 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
     }
 
     public void setValues(File folder) {
+        inSearch = false;
         List<File> navigator = new ArrayList<>();
         while (folder != null && !FilesUtil.isRoot(folder)) {
             navigator.add(folder);
@@ -153,7 +155,8 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
 
     @Override
     public void onUpdate(Observable observable, File changedFolder) {
-        this.setValues(changedFolder);
+        if (!inSearch)
+            this.setValues(changedFolder);
     }
 
     @Override
@@ -167,10 +170,12 @@ public class FilePathNavigationView extends LinearLayout implements Observer {
 
     public void setSearchTerm(String searchTerm) {
         if (layout != null) {
+            inSearch = true;
             layout.removeAllViews();
-            TextView textView = getTextView(searchTerm);
-            textView.setTextColor(getResources().getColor(R.color.white));
-            layout.addView(textView);
+            layout.invalidate();
+            TextView v = getTextView(searchTerm);
+            v.setTextColor(getResources().getColor(R.color.white));
+            layout.addView(v);
         }
     }
 }

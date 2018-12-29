@@ -25,6 +25,7 @@ package com.jhbros.backslash.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -36,7 +37,11 @@ public class FileOpener {
     public static void openFile(File f, Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        intent.setDataAndType(Uri.fromFile(f), mimeTypeMap.getMimeTypeFromExtension(f.getName().substring(f.getName().lastIndexOf(".") + 1)));
+        String mimeType = mimeTypeMap.getMimeTypeFromExtension(f.getName().substring(f.getName().lastIndexOf(".") + 1));
+        mimeType = mimeType == null ? "*/*" : mimeType;
+        Log.d("File :", f.getName());
+        Log.d("MIME TYPE :", mimeType);
+        intent.setDataAndType(Uri.fromFile(f), mimeType);
         try {
             context.startActivity(intent);
         } catch (Exception e) {
