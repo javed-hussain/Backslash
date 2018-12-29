@@ -248,6 +248,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
                 if (noOfSelections > 0) {
                     onSelectionModeChanged(false, 0);
                     refresh();
+                } else if (!searchView.isIconified()) {
+                    onBackPressed();
                 } else {
                     drawerLayout.openDrawer(GravityCompat.START);
                 }

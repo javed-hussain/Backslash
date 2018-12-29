@@ -49,6 +49,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesListRecyclerViewAdapter.ViewHolder> {
     private Context context;
+
     private List<FileItem> files;
     private boolean isSelectionMode = false;
     private int noOfSelections = 0;
@@ -201,4 +202,10 @@ public class FilesListRecyclerViewAdapter extends RecyclerView.Adapter<FilesList
             view = (CardView) itemView;
         }
     }
+
+
+    public List<FileItem> getFiles() {
+        return files;
+    }
+
 }
