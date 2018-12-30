@@ -50,6 +50,8 @@ import com.jhbros.backslash.models.FileItem;
 import com.jhbros.backslash.utils.FilesUtil;
 import com.jhbros.backslash.views.FilePathNavigationView;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements Observer {
     private ExplorerFragment currentFragment;
     private SearchView searchView;
     private int noOfSelections = 0;
+    private MenuMode menuMode = MenuMode.CORE;
+    private boolean isCut = false;
+
+    private List<FileItem> filesToCopy = new ArrayList<>();
 
 //    private static final String TAG = MainActivity.class.getName();
 
@@ -170,14 +176,20 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (noOfSelections > 0) {
-            getMenuInflater().inflate(R.menu.file_operation_menu, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.main_menu, menu);
-            if (menu instanceof MenuBuilder) {
-                ((MenuBuilder) menu).setOptionalIconsVisible(true);
-            }
-            setupSearch(menu);
+        switch (menuMode) {
+            case CORE:
+                getMenuInflater().inflate(R.menu.main_menu, menu);
+                if (menu instanceof MenuBuilder) {
+                    ((MenuBuilder) menu).setOptionalIconsVisible(true);
+                }
+                setupSearch(menu);
+                break;
+            case FILE_OPERATIONS:
+                getMenuInflater().inflate(R.menu.file_operation_menu, menu);
+                break;
+            case PASTE_ENABLED:
+                getMenuInflater().inflate(R.menu.paste_menu, menu);
+                break;
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -246,7 +258,9 @@ public class MainActivity extends AppCompatActivity implements Observer {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (noOfSelections > 0) {
+                if (!menuMode.equals(MenuMode.CORE)) {
+                    menuMode = MenuMode.CORE;
+                    filesToCopy.clear();
                     onSelectionModeChanged(false, 0);
                     refresh();
                 } else if (!searchView.isIconified()) {
@@ -264,11 +278,47 @@ public class MainActivity extends AppCompatActivity implements Observer {
             case R.id.delete:
                 handleDelete();
                 break;
+            case R.id.paste:
+                handlePaste();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void handlePaste() {
+        Log.d("Total Files to copy : ", "" + filesToCopy.size());
+        for (FileItem item : filesToCopy) {
+            try {
+                Log.d("Copying file: ", item.getFile().getAbsolutePath());
+                if (!item.getFile().isDirectory())
+                    FileUtils.copyFile(item.getFile(), new File(currentFolder, item.getFile().getName()));
+                else
+                    FileUtils.copyDirectory(item.getFile(), new File(currentFolder, item.getFile().getName()));
+
+                if (isCut) FilesUtil.cleanupDirectoriesAndFile(item.getFile());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        isCut = false;
+        menuMode = MenuMode.CORE;
+        invalidateOptionsMenu();
+        setupToolbarAndDrawer();
+        refresh();
+    }
+
     private void handleCopy() {
+        menuMode = MenuMode.PASTE_ENABLED;
+        List<FileItem> files = currentFragment.getAdapter().getFiles();
+        for (int i = 0; i < files.size(); i++) {
+            FileItem f = files.get(i);
+            Log.d("Details", f.toString());
+            if (f.isSelected()) {
+                filesToCopy.add(f);
+            }
+        }
+        currentFragment.setFiles(FilesUtil.getSortedFiles(currentFolder));
+        invalidateOptionsMenu();
     }
 
     private void handleDelete() {
@@ -292,6 +342,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
 
     private void handleCut() {
+        isCut = true;
+        handleCopy();
     }
 
     @Override
@@ -352,12 +404,20 @@ public class MainActivity extends AppCompatActivity implements Observer {
                     getSupportActionBar().setTitle(noOfSelections + " Selected");
                     getSupportActionBar().setSubtitle("");
                 }
+                menuMode = MenuMode.FILE_OPERATIONS;
 
             } else {
                 this.noOfSelections = 0;
-                setupToolbarAndDrawer();
+                if (!menuMode.equals(MenuMode.PASTE_ENABLED)) {
+                    menuMode = MenuMode.CORE;
+                    setupToolbarAndDrawer();
+                }
             }
             invalidateOptionsMenu();
         }
+    }
+
+    private enum MenuMode {
+        CORE, FILE_OPERATIONS, PASTE_ENABLED
     }
 }
