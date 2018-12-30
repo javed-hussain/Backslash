@@ -67,7 +67,7 @@
                 fab:fab_title_textColor="@color/white"
                 fab:srcCompat="@drawable/file" />
 
-            <jahirfiquitiva.libs.fabsmenu.TitleFAB
+            <!--<jahirfiquitiva.libs.fabsmenu.TitleFAB
                 android:id="@+id/menu_new_cloud"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                 fab:fab_title="New Cloud Connection"
                 fab:fab_title_backgroundColor="@color/colorPrimary"
                 fab:fab_title_textColor="@color/white"
-                fab:srcCompat="@drawable/cloud" />
+                fab:srcCompat="@drawable/cloud" />-->
         </jahirfiquitiva.libs.fabsmenu.FABsMenu>
 
     </jahirfiquitiva.libs.fabsmenu.FABsMenuLayout>

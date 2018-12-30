@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import androidx.core.content.ContextCompat;
@@ -60,12 +61,15 @@ public class FilesUtil {
     }
 
 
-    public static void getAllStorageLocations(Context ctx, String packageName) {
+    public static List<File> getAllStorageLocations(Context ctx, String packageName) {
+        List<File> storages = new ArrayList<>();
         File[] f = ContextCompat.getExternalFilesDirs(ctx, null);
         for (int i = 0; i < f.length; i++) {
             String path = f[i].getParent().replace("/Android/data/", "").replace(packageName, "");
             Log.d("DIRS : ", path); //sdcard and internal and usb
+            storages.add(new File(path));
         }
+        return storages;
     }
 
     public static List<FileItem> getSortedFiles(File f) {
@@ -107,7 +111,7 @@ public class FilesUtil {
         String[] units = new String[]{"bytes", "KB", "MB", "GB", "TB"};
         double val = bytes;
         int i = 0;
-        while (val > 1024) {
+        while (val > 100 && i <= 3) {
             val /= 1024;
             i++;
         }
@@ -131,6 +135,20 @@ public class FilesUtil {
 
     public static boolean isRoot(File f) {
         return f.getAbsolutePath().equalsIgnoreCase(ROOT.getAbsolutePath());
+    }
+
+    public static HashMap<String, String> getStats(File f) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("AVAILABLE", convertSize(f.getUsableSpace()));
+        map.put("TOTAL", convertSize(f.getTotalSpace()));
+        map.put("PERCENT", (int) ((f.getTotalSpace() - f.getUsableSpace()) * 100 / f.getTotalSpace()) + "");
+        return map;
+    }
+
+    public static String getStorageName(File f) {
+        if (isRoot(f)) return "Internal Storage";
+        if (f.getParentFile().getAbsolutePath().equals("/storage")) return "SD Card";
+        return f.getName();
     }
 
     public enum FileType {

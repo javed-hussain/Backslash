@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.Toast;
 
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.adapters.FilesListRecyclerViewAdapter;
@@ -64,7 +63,7 @@ public class ExplorerFragment extends Fragment implements Observable {
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView filesList;
     private FABsMenu menu;
-    private TitleFAB newFolder, newFile, newConnection;
+    private TitleFAB newFolder, newFile/*, newConnection*/;
 
     @Nullable
     @Override
@@ -74,7 +73,7 @@ public class ExplorerFragment extends Fragment implements Observable {
         menu = view.findViewById(R.id.fabs_menu);
         newFolder = view.findViewById(R.id.menu_new_folder);
         newFile = view.findViewById(R.id.menu_new_file);
-        newConnection = view.findViewById(R.id.menu_new_cloud);
+        //newConnection = view.findViewById(R.id.menu_new_cloud);
 
         refreshLayout = view.findViewById(R.id.refresh_layout);
         refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark));
@@ -126,12 +125,12 @@ public class ExplorerFragment extends Fragment implements Observable {
                 showDialog(true);
             }
         });
-        newConnection.setOnClickListener(new View.OnClickListener() {
+        /*newConnection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "This menu will create a new Connection", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
 

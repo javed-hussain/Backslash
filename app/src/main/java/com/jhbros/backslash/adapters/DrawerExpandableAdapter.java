@@ -9,11 +9,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.jhbros.backslash.R;
 import com.jhbros.backslash.models.DrawerMenuModel;
+import com.jhbros.backslash.utils.FilesUtil;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 
 public class DrawerExpandableAdapter extends BaseExpandableListAdapter {
+
+    private List<File> storages;
+    private Context ctx;
+
+    public DrawerExpandableAdapter(Context ctx) {
+        this.ctx = ctx;
+        this.storages = FilesUtil.getAllStorageLocations(ctx, ctx.getPackageName());
+    }
+
     @Override
     public int getGroupCount() {
         return 1;
@@ -21,7 +37,7 @@ public class DrawerExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return 1;
+        return storages.size();
     }
 
     @Override
@@ -51,17 +67,26 @@ public class DrawerExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        LayoutInflater infalInflater = (LayoutInflater) parent.getContext()
+        LayoutInflater layoutInflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = infalInflater.inflate(R.layout.list_group_header, null);
+        convertView = layoutInflater.inflate(R.layout.list_group_header, null);
         return convertView;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        LayoutInflater infalInflater = (LayoutInflater) parent.getContext()
+        LayoutInflater layoutInflater = (LayoutInflater) parent.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = infalInflater.inflate(R.layout.list_group_child, null);
+        convertView = layoutInflater.inflate(R.layout.list_group_child, null);
+        TextView storageName = convertView.findViewById(R.id.storage_name);
+        TextView storageStats = convertView.findViewById(R.id.storage_stats);
+        TextView percentUsage = convertView.findViewById(R.id.percent_usage);
+        ProgressBar percentProgress = convertView.findViewById(R.id.usage_progress);
+        HashMap<String, String> map = FilesUtil.getStats(storages.get(childPosition));
+        storageName.setText(FilesUtil.getStorageName(storages.get(childPosition)));
+        storageStats.setText(map.get("AVAILABLE") + " free of " + map.get("TOTAL"));
+        percentUsage.setText(map.get("PERCENT") + "%");
+        percentProgress.setProgress(Integer.parseInt(map.get("PERCENT")));
         return convertView;
     }
 

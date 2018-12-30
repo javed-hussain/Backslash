@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
                 });
         navigationView.setItemIconTintList(null);
         ExpandableListView menuList = navigationView.findViewById(R.id.menu_list);
-        menuList.setAdapter(new DrawerExpandableAdapter());
+        menuList.setAdapter(new DrawerExpandableAdapter(getApplicationContext()));
     }
 
     private void setHomeIcon(@DrawableRes int id) {

@@ -24,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Internal Storage"
+            android:id="@+id/storage_name"
             android:textSize="14dp" />
 
         <ProgressBar
@@ -32,6 +33,7 @@
             android:layout_height="2dp"
             android:layout_marginTop="5dp"
             android:progress="54"
+            android:id="@+id/usage_progress"
             android:progressBackgroundTint="@color/colorAccent" />
 
         <TextView
@@ -39,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="5.21 GB free of 11.8 GB"
+            android:id="@+id/storage_stats"
             android:textSize="12dp" />
     </LinearLayout>
 
@@ -48,6 +51,7 @@
         android:layout_gravity="center"
         android:padding="20dp"
         android:text="54%"
+        android:id="@+id/percent_usage"
         android:textSize="14dp" />
 
 </LinearLayout>
