@@ -37,6 +37,17 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.jhbros.backslash.R;
@@ -56,19 +67,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.viewpager.widget.ViewPager;
-
 public class MainActivity extends AppCompatActivity implements Observer {
     private DrawerLayout drawerLayout;
     private FilePathNavigationView pathNavigationView;
@@ -85,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
 //    private static final String TAG = MainActivity.class.getName();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
